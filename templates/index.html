@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css" />
+    <title>Formulário de cadastro</title>
+</head>
+<body>
+    <div class="container">
+        <form action="/formSubmit" id="formIphone" method="post">
+            <div class="form-header">
+                <div class="title">
+                    <h1>Manutenção iPhone</h1>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="fullname_employee">Nome do funcionário</label>
+                <input class="form-control" id="fullname_employee" type="text" name="fullname_employee" placeholder="Digite seu nome completo" required>
+            </div>
+
+            <div class="input-group">
+                <label for="fullname_client">Nome do cliente</label>
+                <input class="form-control" id="fullname_client" type="text" name="fullname_client" placeholder="Digite seu nome completo" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="modelosIphone">Modelo do iPhone</label>
+                <select class="form-control" id="modelosIphone" name="modelosIphone" class="form-control" data-live-search="true" title="Modelo do iPhone" >
+                {% for row in modelos %}
+                <option value="{{row.nome_modelo}}">{{row.nome_modelo}}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="id_iPhone">ID do iPhone</label>
+                <select class="form-control" id="id_iPhone" name="id_iPhone" class="form-control" data-live-search="true" title="ID do iPhone" >
+                    
+                </select>
+            </div>
+
+            <div class="color-inputs">
+                <div class="color-title">
+                    <h6>Cores</h6>
+                </div>
+
+                <div class="color-group">
+                    <div class="color-input">
+                        <label for="vermelho">Vermelho</label><br>
+                        <input class="form-control" type="radio" id="vermelho" name="color" value="Vermelho" required>
+                    </div>
+
+                    <div class="color-input">
+                        <label for="preto">Preto</label><br>
+                        <input class="form-control" type="radio" id="preto" name="color" value="Preto">
+                    </div>
+
+                    <div class="color-input">
+                        <label for="branco">Branco</label><br>
+                        <input class="form-control" type="radio" id="branco" name="color" value="Branco">
+                    </div>
+
+                    <div class="color-input">
+                        <label for="Azul">Azul</label><br>
+                        <input class="form-control" type="radio" id="azul" name="color" value="Azul">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="input-group">
+                <p><label for="problem">Problema:</label></p>
+                <textarea class="form-control" id="problem" name="problem" rows="4" cols="50" placeholder="Digite o problema do celular"></textarea>
+                <br>
+            </div>
+            <input class="form-control" type="submit" value="Enviar">
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function () {
+                $("#modelosIphone").selectpicker();
+
+                $("#id_iPhone").selectpicker();
+
+                function load_data(type, category_id) {
+                    $.ajax({
+                        url: "/serials_iphone",
+                        method: "POST",
+                        data: { type: type, category_id: category_id },
+                        dataType: "json",
+                        success: function (data) { //alert(category_id)
+                            var html = "";
+                            for (var count = 0; count < data.length; count++) {
+                                html += '<option value="' + data[count].serial + '">' + data[count].serial + "</option>";
+                            }
+                            if (type == "cel_model") {
+                                $("#modelosIphone").html(html);
+                                $("#modelosIphone").selectpicker("refresh");
+                            } else {
+                                $("#id_iPhone").html(html);
+                                $("#id_iPhone").selectpicker("refresh");
+                            }
+                        },
+                    });
+                }
+
+                $(document).on("change", "#modelosIphone", function () {
+                    var category_id = $("#modelosIphone").val();
+                    load_data("cel_serial", category_id);
+                });
+            });
+    </script>
+</body>
+
+</html>
+
